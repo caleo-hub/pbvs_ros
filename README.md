@@ -4,7 +4,7 @@
 
 ```bash
 # source global ros
-$ source /opt/ros/<your_ros_version>/setup.bash
+$ source /opt/ros/$ROS_DISTRO/setup.bash
 
 # change directory
 $ cd ~/catkin_ws
