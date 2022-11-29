@@ -1,0 +1,23 @@
+<launch>
+  <!-- Gazebo Simulator, then sim = true -->
+  <arg name="sim" default="true" />
+  <arg name="debug" default="false" />
+
+  <!-- Remap follow_joint_trajectory -->
+  <remap if="$(arg sim)" from="/scaled_pos_joint_traj_controller/follow_joint_trajectory" to="/eff_joint_traj_controller/follow_joint_trajectory"/>
+
+  <!-- Launch moveit -->
+  <include file="$(find ur5_moveit_config)/launch/move_group.launch">
+    <arg name="debug" default="$(arg debug)" />
+  </include>
+
+  <arg name="use_rviz" default="true" />
+
+
+  <include file="$(find pbvs_ros)/myur5_description/launch/myur5.launch"></include>
+  <!-- Run Rviz and load the default config to see the state of the move_group node -->
+  <include file="$(find pbvs_ros)/myur5sim/myur5_moveit_config/launch/moveit_rviz.launch" if="$(arg use_rviz)">
+    <arg name="config" value="$(find pbvs_ros)/myur5sim/myur5_moveit_config/launch/moveit.rviz"/>
+    <arg name="debug" value="$(arg debug)"/>
+  </include>
+</launch>
