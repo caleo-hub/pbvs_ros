@@ -37,45 +37,8 @@
 
   <link name="world"/>
 
-  <link name="pedestal">
-    <inertial>
-      <origin xyz="0.0 0.0 0.5" rpy="0.0 0.0 0.0"/>
-      <mass value="20.0"/>
-      <inertia ixx="200.0" ixy="200.0" ixz="200.0" iyy="200.0" iyz="200.0" izz="200.0"/>
-    </inertial>
-    <visual name="pedestal_visual">
-      <origin xyz="0.0 0.0 0.5" rpy="0.0 0.0 0.0"/>
-      <geometry>
-        <cylinder radius="0.1" length="1"/>
-      </geometry>
-      <material name="Gray">
-        <color rgba="0.5 0.5 0.5 0.0"/>
-      </material>
-    </visual>
-    <collision>
-      <origin xyz="0.0 0.0 0.5" rpy="0.0 0.0 0.0"/>
-      <geometry>
-        <cylinder radius="0.1" length="1"/>
-      </geometry>
-    </collision>
-  </link>
-
-  <gazebo reference="pedestal">
-    <material>Gazebo/Orange</material>
-  </gazebo>
-
-
-  <joint name="world_joint" type="fixed">
-    <parent link="world"/>
-    <child link="pedestal"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-  </joint>
-
-  <joint name="base_joint" type="fixed">
-    <parent link="pedestal"/>
-    <child link="base_link"/>
-    <origin xyz="0 0 1" rpy="0 0 0"/>
-  </joint>
+  <!-- Pedestal -->
+  <xacro:include filename="$(find pbvs_ros)/myur5_description/urdf/pedestal.xacro"/>
 
   <link name="tool0_controller"/>
   <joint name="tool_controller_fake_joint" type="fixed">
@@ -83,6 +46,15 @@
     <child link="tool0_controller"/>
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
+
+  <!-- Camera -->
+  <xacro:include filename="$(find pbvs_ros)/myur5_description/urdf/camera.xacro"/>
+
+
+
+
+
+
 
 
 </robot>

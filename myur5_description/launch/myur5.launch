@@ -17,7 +17,7 @@
     <arg name="tf_pub_rate" default="125" doc="Rate at which robot_state_publisher should publish transforms."/>
 
     <!-- Gazebo parameters -->
-    <arg name="paused" default="false" doc="Starts Gazebo in paused mode" />
+    <arg name="paused" default="True" doc="Starts Gazebo in paused mode" />
     <arg name="gui" default="true" doc="Starts Gazebo gui" />
 
 
@@ -37,13 +37,13 @@
 
     <!-- Start the 'driver' (ie: Gazebo in this case) -->
     <include file="$(dirname)/inc/ur_control.launch.xml">
-    <arg name="gazebo_world" default="$(find pbvs_ros)/myur5_description/world/lab.world" />
+        <arg name="gazebo_world" default="$(find pbvs_ros)/myur5_description/world/lab.world" />
 
-    <arg name="controller_config_file" value="$(arg controller_config_file)"/>
-    <arg name="controllers" value="$(arg controllers)"/>
-    <arg name="gui" value="$(arg gui)"/>
-    <arg name="paused" value="$(arg paused)"/>
-    <arg name="stopped_controllers" value="$(arg stopped_controllers)"/>
+        <arg name="controller_config_file" value="$(arg controller_config_file)"/>
+        <arg name="controllers" value="$(arg controllers)"/>
+        <arg name="gui" value="$(arg gui)"/>
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="stopped_controllers" value="$(arg stopped_controllers)"/>
     </include>
 
 </launch>
