@@ -17,16 +17,6 @@
 			<uri>model://table</uri>
 			<pose>0 0.75 0 0 0 0</pose>
 		</include>
-		
-		<!-- A cardboard box -->
-		<include>
-			<uri>model://cardboard_box</uri>
-			<static>false</static>
-			<pose>0 0.75 1.5 0 0 0</pose>
 
-
-		</include>
-
-		
 	</world>
 </sdf>
