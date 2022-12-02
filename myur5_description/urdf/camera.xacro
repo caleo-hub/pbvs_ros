@@ -34,7 +34,7 @@
             <visualize>true</visualize>
             <update_rate>30.0</update_rate>
             <camera name="head">
-              <horizontal_fov>1.089</horizontal_fov>
+              <horizontal_fov>1.3962634</horizontal_fov>
               <image>
                 <width>800</width>
                 <height>800</height>
@@ -52,6 +52,12 @@
               <imageTopicName>image_raw</imageTopicName>
               <cameraInfoTopicName>camera_info</cameraInfoTopicName>
               <frameName>camera_link_optical</frameName>
+              <hackBaseline>0.07</hackBaseline>
+              <distortionK1>0.0</distortionK1>
+              <distortionK2>0.0</distortionK2>
+              <distortionK3>0.0</distortionK3>
+              <distortionT1>0.0</distortionT1>
+              <distortionT2>0.0</distortionT2>
 
             </plugin>
         </sensor>

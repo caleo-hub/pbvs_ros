@@ -62,3 +62,15 @@ joint_goal[5] = tau/4
 
 move_group.go(joint_goal, wait=True)
 move_group.stop()
+
+# We get the joint values from the group and change some of the values:
+joint_goal = move_group.get_current_joint_values()
+joint_goal[0] = tau/4.8
+joint_goal[1] = -tau/8
+joint_goal[2] = 0.077*tau
+joint_goal[3] = -tau/5
+joint_goal[4] = -tau/4
+joint_goal[5] = 0.705*tau
+
+move_group.go(joint_goal, wait=True)
+move_group.stop()
