@@ -5,6 +5,7 @@ import rospy
 import moveit_commander
 import moveit_msgs.msg
 import geometry_msgs.msg
+from moveit_cartesiano import planejar_cartesiano
 
 try:
     from math import pi, tau, dist, fabs, cos
@@ -90,3 +91,11 @@ move_group.go(joint_goal, wait=True)
 # Calling ``stop()`` ensures that there is no residual movement
 move_group.stop()
 
+# plan, fraction =  planejar_cartesiano(move_group)
+
+# display_trajectory = moveit_msgs.msg.DisplayTrajectory()
+# display_trajectory.trajectory_start = robot.get_current_state()
+# display_trajectory.trajectory.append(plan)
+# # Publish
+# display_trajectory_publisher.publish(display_trajectory)
+# move_group.execute(plan, wait=True)
