@@ -18,5 +18,11 @@
 			<pose>0 0.75 0 0 0 0</pose>
 		</include>
 
+		<!-- A box -->
+		<include>
+			<uri>model://Apriltag36_11_00000</uri>
+			<pose>0 0.75 1.05 0 0 0</pose>
+		</include>
+
 	</world>
 </sdf>
