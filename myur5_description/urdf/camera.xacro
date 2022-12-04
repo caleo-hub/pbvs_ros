@@ -5,7 +5,8 @@
     <joint name="camera_joint" type="fixed">
         <parent link="wrist_3_link"/>
         <child link="camera_link"/>
-        <origin xyz="0 0 0" rpy="0 ${-pi/2} ${-pi/2}"/>
+        <origin xyz="0 0 0" rpy="0 ${-pi/2} ${pi}"/>
+        <!-- Rotacionar Camera aqui -->
     </joint>
  
     <link name="camera_link">
@@ -36,8 +37,8 @@
             <camera name="head">
               <horizontal_fov>1.3962634</horizontal_fov>
               <image>
-                <width>800</width>
-                <height>800</height>
+                <width>1280</width>
+                <height>720</height>
                 <format>R8G8B8</format>
               </image>
               <clip>
