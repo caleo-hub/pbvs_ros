@@ -6,7 +6,11 @@ import cv2
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 import apriltag
+import numpy as np
 
+
+
+  
 class camera_1:
 
   def __init__(self):
@@ -35,7 +39,30 @@ class camera_1:
       ptC = (int(ptC[0]), int(ptC[1]))
       ptD = (int(ptD[0]), int(ptD[1]))
       ptA = (int(ptA[0]), int(ptA[1]))
-      # draw the bounding box of the AprilTag detection
+      
+      objectPoints = np.array([(1, 1, 0),(1, 0, 0),(0,0,0), (0, 1, 0)],dtype=np.float32)
+      imagePoints = np.array([ptA, ptB, ptC, ptD],dtype=np.float32)
+      # CAmera Info in /camera_info
+      cameraMatrix = np.array([(762.7249337622711, 0.0, 640.5), (0.0, 762.7249337622711, 360.5), (0.0, 0.0, 1.0)],dtype=np.float32)
+      distCoeffs = np.zeros((4,1))
+      
+      criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+      corners2 = cv2.cornerSubPix(gray,imagePoints,(11,11),(-1,-1),criteria)
+      success, rotation_vector, translation_vector = cv2.solvePnP(objectPoints,corners2, cameraMatrix, distCoeffs)
+      
+      # # project 3D points to image plane
+      axis = np.float32([[1,0,0], [0,1,0], [0,0,1]]).reshape(-1,3)
+      imgpts, jac = cv2.projectPoints(axis, rotation_vector, translation_vector, cameraMatrix, distCoeffs)
+      
+ 
+      
+      imagePoints = imagePoints.astype('int32')
+      imgpts = imgpts.astype('int32')
+      corners2 = corners2.astype('int32')
+      image = self.draw(image,corners2,imgpts)
+      
+      
+      # # draw the bounding box of the AprilTag detection
       cv2.line(image, ptA, ptB, (0, 255, 0), 2)
       cv2.line(image, ptB, ptC, (0, 255, 0), 2)
       cv2.line(image, ptC, ptD, (0, 255, 0), 2)
@@ -47,9 +74,17 @@ class camera_1:
       tagFamily = r.tag_family.decode("utf-8")
       cv2.putText(image, tagFamily, (ptA[0], ptA[1] - 15),
         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+      
     # show the output image after AprilTag detection
     cv2.imshow("Image", image)
     cv2.waitKey(1)
+    
+  def draw(self, img, corners, imgpts):
+    corner = tuple(corners[2].ravel())
+    img = cv2.line(img, corner, tuple(imgpts[0].ravel()), (255,0,0), 5)
+    img = cv2.line(img, corner, tuple(imgpts[1].ravel()), (0,255,0), 5)
+    img = cv2.line(img, corner, tuple(imgpts[2].ravel()), (0,0,255), 5)
+    return img
 
 def main():
   a = camera_1()
