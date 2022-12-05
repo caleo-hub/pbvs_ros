@@ -21,7 +21,7 @@
 		<!-- A box -->
 		<include>
 			<uri>model://Apriltag36_11_00000</uri>
-			<pose>0 0.75 1.05 0 0 0</pose>
+			<pose>0 0.75 1.05 0 0 -1.57079632679</pose>
 		</include>
 
 	</world>
