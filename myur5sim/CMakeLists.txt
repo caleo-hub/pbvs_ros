@@ -201,6 +201,8 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-catkin_install_python(PROGRAMS scripts/interface.py scripts/home_position.py scripts/camera_read.py scripts/tag_detection.py scripts/pose_estimation.py
+catkin_install_python(PROGRAMS scripts/home_position.py scripts/pose_estimation.py scripts/controlador.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
+
+

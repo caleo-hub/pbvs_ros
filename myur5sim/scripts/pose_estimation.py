@@ -9,15 +9,17 @@ import apriltag
 import numpy as np
 import rotm2euler
 import math
+from std_msgs.msg import Float32MultiArray
 
+from scipy.spatial.transform import Rotation 
 
-
-  
+    
 class TagPoseEstimator:
 
   def __init__(self):
+    self.pose_error_publisher = rospy.Publisher("/pose_error", Float32MultiArray, queue_size=10)
     self.image_sub = rospy.Subscriber("/myur5/camera1/image_raw", Image, self.callback)
-    # Camera Info in /camera_info
+    # Camera Info in /camera_info 
     self.cameraMatrix = np.array([(762.7249337622711, 0.0, 640.5), (0.0, 762.7249337622711, 360.5), (0.0, 0.0, 1.0)],dtype=np.float32)
     self.distCoeffs = np.zeros((4,1))
     self.criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
@@ -25,7 +27,8 @@ class TagPoseEstimator:
     self.axis = np.float32([[1,0,0], [0,1,0], [0,0,1]]).reshape(-1,3)
     self.tag_points = np.array([(1, 1, 0),(1, 0, 0),(0,0,0), (0, 1, 0)],dtype=np.float32)
     self.estimated_pose = np.identity(n=4, dtype=np.float64) # Estimated pose matrix
-  
+    
+    
   def callback(self,data):
     bridge = CvBridge()
 
@@ -65,15 +68,27 @@ class TagPoseEstimator:
       self.image = image
       self.origin = image_points[2]
       self.estimate_pose(rotation_vector,translation_vector)
+      float_array = Float32MultiArray()
+      float_array.data = [self.dx, self.dy, self.yaw]
+      self.pose_error_publisher.publish(float_array)
+      rate.sleep()
       self.draw_desired_pose()
-
-    # show the output image after AprilTag detection
-    cv2.imshow("Image", self.image)
+      
+      
+      
+      
+      
+      
+    cv2.imshow("Image", image)
     cv2.waitKey(1)
+    
+    # When everything done, release the capture
+    
+
   
   def draw_desired_pose(self):
-    self.image = cv2.line(self.image, (int(self.image.shape[1]/2),int(self.image.shape[0]/2)), (int(self.image.shape[1]/2),int(self.image.shape[0]/2)+50), (255,0,0), 5)
-    self.image = cv2.line(self.image, (int(self.image.shape[1]/2),int(self.image.shape[0]/2)), (int(self.image.shape[1]/2)+50,int(self.image.shape[0]/2)), (0,255,0), 5)
+    self.image = cv2.line(self.image, (int(self.image.shape[1]/2),int(self.image.shape[0]/2)), (int(self.image.shape[1]/2)+50,int(self.image.shape[0]/2)), (255,0,0), 5)
+    self.image = cv2.line(self.image, (int(self.image.shape[1]/2),int(self.image.shape[0]/2)), (int(self.image.shape[1]/2),int(self.image.shape[0]/2)-50), (0,255,0), 5)
 
 
     
@@ -92,8 +107,8 @@ class TagPoseEstimator:
     realworld_tvec[1], realworld_tvec[2] = -realworld_tvec[1], -realworld_tvec[2]
     
     # Conversion euler angles in radians, and then to degrees
-    pitch, roll, yaw =  rotm2euler.rotation_matrix_to_euler_angles(R)
-    pitch, roll, yaw = math.degrees(pitch), math.degrees(roll), math.degrees(yaw)
+    self.pitch, self.roll, self.yaw =  rotm2euler.rotation_matrix_to_euler_angles(R)
+    pitch, roll, yaw = math.degrees(self.pitch), math.degrees(self.roll), math.degrees(self.yaw)
     estimated_euler_angles = np.array([roll, pitch, yaw])
     
     # Construct homogeneous transformation matrix
@@ -103,12 +118,23 @@ class TagPoseEstimator:
 
     self.target_homogeneous_matrix = np.array([(0,0,0,0),(0,0,0,0),(0,0,0,0),(0,0,0,1)])
     t = np.matmul(np.linalg.inv(self.estimated_pose), self.target_homogeneous_matrix)
-    #t = np.linalg.inv(self.estimated_pose)
-    dx = t[0][3]
-    dy = t[1][3]
-    self.alpha = math.atan2(dy, dx)
-    self.rho = math.sqrt(math.pow(dy, 2) + math.pow(dx, 2))
-    text = f"Alpha: {str(self.alpha)} Rho:{str(self.rho)}"
+    self.dx = t[0][3]
+    self.dy = t[1][3]
+    #self.alpha = math.atan2(self.dy, self.dx)
+
+    # rotational_matrix = np.array([
+    #                             [t[0][0], t[0][1], t[0][2]],
+    #                             [t[1][0], t[1][1], t[1][2]],
+    #                             [t[2][0], t[2][1], t[2][2]],
+    #                         ])
+
+    # r = Rotation.from_matrix(rotational_matrix)
+    # self.beta = r.as_euler('XYZ', degrees=False)[2]
+    
+    dx = round(self.dx,2)
+    dy = round(self.dy,2)
+    yaw = round(self.yaw,2)
+    text = f"dX: {str(dx)} dY:{str(dy)} yaw: {str(yaw)}"
 
     
     cv2.putText(self.image, text, (self.origin[0], self.origin[1] - 15),
@@ -140,6 +166,9 @@ class TagPoseEstimator:
     return img
 
 
+  
+  
+  
 def main():
   a = TagPoseEstimator()
   
@@ -152,4 +181,5 @@ def main():
 
 if __name__ == '__main__':
     rospy.init_node('camera_read', anonymous=False)
+    rate = rospy.Rate(1000)
     main()
