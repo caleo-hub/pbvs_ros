@@ -32,3 +32,20 @@ $ catkin_make
 # activate the workspace (ie: source it)
 $ source devel/setup.bash
 ```
+
+### Executando o experimento
+
+
+Escolha uma das opções 
+```bash
+# Ambiente com RVIZ, Gazebo e Camera 
+roslaunch pbvs_ros sim.launch
+
+# Ambiente apenas Gazebo e Camera 
+roslaunch pbvs_ros simple_sim.launch
+```
+
+Quando o robô estiver posicionado, execute o controlador em outro terminal
+```bash
+roslaunch pbvs_ros controlador.py
+```
