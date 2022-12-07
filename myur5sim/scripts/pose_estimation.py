@@ -100,8 +100,11 @@ class TagPoseEstimator:
   def estimate_pose(self,rotation_vector,translation_vector):
     rvec_flipped = -rotation_vector.ravel()
     tvec_flipped = -translation_vector.ravel()
+    
     # Convert rvec to a rotation matrix, and then to a Euler angles
     R, jacobian = cv2.Rodrigues(rvec_flipped)
+    
+    
     # From image plane to world coordinates
     realworld_tvec = np.dot(R, tvec_flipped)
     realworld_tvec[1], realworld_tvec[2] = -realworld_tvec[1], -realworld_tvec[2]
