@@ -17,7 +17,7 @@ from scipy.spatial.transform import Rotation
 class TagPoseEstimator:
 
   def __init__(self):
-    self.pose_error_publisher = rospy.Publisher("/pose_error", Float32MultiArray, queue_size=10)
+    self.pose_error_publisher = rospy.Publisher("/pose_error", Float32MultiArray, queue_size=1)
     self.image_sub = rospy.Subscriber("/myur5/camera1/image_raw", Image, self.callback)
     # Camera Info in /camera_info 
     self.cameraMatrix = np.array([(762.7249337622711, 0.0, 640.5), (0.0, 762.7249337622711, 360.5), (0.0, 0.0, 1.0)],dtype=np.float32)

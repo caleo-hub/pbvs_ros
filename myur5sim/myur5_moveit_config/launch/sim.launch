@@ -22,4 +22,6 @@
   </include>
 
   <node    name="initialization"    pkg="pbvs_ros"    type="home_position.py"    output="screen"/>
+  <node    name="camera_read"    pkg="pbvs_ros"    type="pose_estimation.py"    output="screen"/>
+
 </launch>

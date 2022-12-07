@@ -59,6 +59,8 @@ class Controller:
         return False
     else:
         self.move_group.stop()
+        self.initial_pose = self.move_group.get_current_pose().pose
+
         return True
   def set_real_d(self, dx, dy):
     dx_frame = 0
@@ -67,6 +69,7 @@ class Controller:
     neutral_angle = -tau/4
     joint_angle = joint_goal[5]
     angle_change = neutral_angle - joint_angle
+    
     # Para eixo Y
     dx_frame += sin(angle_change)*dy
     dy_frame += cos(angle_change)*dy
@@ -75,12 +78,14 @@ class Controller:
     dx_frame += cos(angle_change)*dx
     dy_frame += sin(angle_change)*dx
     
-    dx_frame = round(dx_frame,4)
-    dy_frame = round(dy_frame,4)
+    # dx_frame = round(dx_frame,4)
+    # dy_frame = round(dy_frame,4)
     return dx_frame, dy_frame
     
   def control_loop_pos(self,dx, dy):
-    if dist([dx],[dy])>=0.5:
+    print('distancia:',dist([dx,dy],[0,0]))
+    if dist([dx,dy],[0,0])>=0.5:
+      
       # self.move_group.set_planning_time(10)
       #self.move_group.set_goal_tolerance(0.1)
       waypoints = []
@@ -88,9 +93,11 @@ class Controller:
       k = 0.5
       wpose = self.move_group.get_current_pose().pose
       dx_frame, dy_frame = self.set_real_d(dx,dy)
-      print(dx_frame, dy_frame)
+      print('correção: ',dx_frame, dy_frame)
       wpose.position.x += k*scale * dx_frame
       wpose.position.y += k*scale * dy_frame  
+      # wpose.position.z = self.initial_pose.position.z
+      # wpose.orientation.w = self.initial_pose.orientation.w
       
       # SET POSE ===========================
       # self.move_group.set_pose_target(wpose)
@@ -103,7 +110,9 @@ class Controller:
       # CARTESIANO ========================== 
       waypoints.append(copy.deepcopy(wpose))
       (plan, fraction) = self.move_group.compute_cartesian_path(waypoints, 0.001, 1)
-      print('fraction',fraction)
+      fraction = round(fraction,3)
+      print('Realização do Trajeto',fraction*100,'%')
+      
       self.move_group.execute(plan, wait=True)
       self.move_group.stop()
       #========================================
